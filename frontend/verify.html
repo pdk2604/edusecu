@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>EduSecu - Vérifier un document</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f9f9f9;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .result {
+      margin-top: 20px;
+      background: #e8f7ff;
+      padding: 15px;
+      border: 1px solid #a8dff5;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">🔍 Vérifier un document - EduSecu</h2>
+
+  <form id="verifyForm">
+    <label>Entrer le hash SHA-256 :</label>
+    <input type="text" name="hash" required placeholder="ex : 8a7f2f5...">
+
+    <button type="submit">Vérifier</button>
+  </form>
+
+  <div id="result" class="result" style="display: none;"></div>
+
+  <script>
+    const form = document.getElementById('verifyForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const hash = form.hash.value;
+
+      const response = await fetch(`http://127.0.0.1:5000/verify_document?hash=${hash}`);
+      const data = await response.json();
+
+      if (data.is_valid) {
+        resultDiv.innerHTML = `
+          ✅ Document authentique<br><br>
+          🧑 <b>Nom :</b> ${data.full_name}<br>
+          📄 <b>Type :</b> ${data.doc_type}<br>
+          ⏱️ <b>Ajouté le :</b> ${new Date(data.timestamp * 1000).toLocaleString()}
+        `;
+      } else {
+        resultDiv.innerHTML = `❌ Document non trouvé dans la blockchain`;
+      }
+
+      resultDiv.style.display = 'block';
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion Admin - EduSecu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="loginForm">
+    <h3>🔐 Connexion Admin</h3>
+    <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+    <input type="password" name="password" placeholder="Mot de passe" required>
+    <button type="submit">Se connecter</button>
+    <div id="result" class="result"></div>
+  </form>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = form.username.value;
+      const password = form.password.value;
+
+      const response = await fetch('http://127.0.0.1:5000/login', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'  // pour garder la session
+      });
+
+      const data = await response.json();
+      resultDiv.innerText = data.message;
+
+      if (response.ok) {
+        resultDiv.style.color = "green";
+      } else {
+        resultDiv.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>
